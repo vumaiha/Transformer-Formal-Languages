@@ -17,7 +17,7 @@ from gensim import models
 from src.components.rnns import RNNModel
 from src.components.transformers import TransformerModel, TransformerXLModel, SimpleTransformerModel
 from src.components.mogrifierLSTM import MogrifierLSTMModel
-from src.components.sa_rnn import SARNNModel
+#from src.components.sa_rnn import SARNNModel
 
 from src.utils.sentence_processing import *
 from src.utils.logger import print_log, store_results
@@ -48,8 +48,8 @@ class LanguageModel(nn.Module):
 		self.logger.debug('Initalizing Optimizer and Criterion...')
 		self._initialize_optimizer()
 
-		# nn.CrossEntropyLoss() does both F.log_softmax() and nn.NLLLoss() 
-		# self.criterion = nn.NLLLoss() 
+		# nn.CrossEntropyLoss() does both F.log_softmax() and nn.NLLLoss()
+		# self.criterion = nn.NLLLoss()
 		# self.criterion = nn.CrossEntropyLoss(reduction= 'none')
 		self.criterion = nn.MSELoss(reduction = 'none')
 
@@ -63,7 +63,7 @@ class LanguageModel(nn.Module):
 										self.config.dropout, pos_encode = self.config.pos_encode,
 										bias = self.config.bias, pos_encode_type= self.config.pos_encode_type,
 										max_period = self.config.max_period).to(self.device)
-										
+
 		elif self.config.model_type == 'SAN-Simple':
 			self.model = SimpleTransformerModel(self.voc.nwords, self.voc.noutputs, self.config.d_model,
 												self.config.heads, self.config.d_ffn, self.config.depth,
@@ -155,7 +155,7 @@ class LanguageModel(nn.Module):
 			if np.all(np.equal(out_j, target_j)) and (out_j.flatten() == target_j.flatten()).all():
 			# If so, set `pred` as one
 				batch_acc+=1
-		
+
 		batch_acc = batch_acc/source.size(1)
 
 
@@ -193,7 +193,7 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 	if config.histogram and writer:
 		for name, param in model.named_parameters():
 			writer.add_histogram(name, param, epoch_offset)
-	
+
 	estop_count=0
 	n_bins = len(val_loader_bins)
 	max_train_acc = max_val_acc
@@ -214,7 +214,7 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 			od['Epoch'] = epoch + epoch_offset
 			print_log(logger, od)
 
-			
+
 			train_loss_epoch = 0.0
 			train_acc_epoch = 0.0
 			val_acc_epoch = 0.0
@@ -288,7 +288,7 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 					logger.debug('Validation Accuracy bin{} : {}'.format(i, val_acc_epoch_bins[i]))
 
 					#estop_count=0
-			
+
 			if save_flag:
 				state = {
 							'epoch' : epoch + epoch_offset,
@@ -329,7 +329,6 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 						'lr' : lr_epoch
 					}
 					logger.debug('Validation Accuracy: {}'.format(val_acc_epoch))
-
 					save_checkpoint(state, epoch + epoch_offset, logger, config.model_path, config.ckpt)
 					estop_count=0
 			'''
@@ -362,11 +361,11 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 			# if estop_count > 10:
 			# 	logger.debug('Early Stopping at Epoch: {} after no improvement in {} epochs'.format(epoch, estop_count))
 			# 	break
-			
+
 			if np.mean(val_acc_epoch_bins) >= 0.999:
 				logger.info('Reached optimum performance!')
 				break
-			
+
 		writer.export_scalars_to_json(os.path.join(config.board_path, 'all_scalars.json'))
 		writer.close()
 
@@ -375,12 +374,12 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 		if config.results:
 			store_results(config, max_val_acc_bins, max_train_acc, best_train_epoch, train_loss_epoch, best_epoch_bins)
 			logger.info('Scores saved at {}'.format(config.result_path))
-	
+
 	except KeyboardInterrupt:
 		logger.info('Exiting Early....')
 		if config.results:
 			store_results(config, max_val_acc_bins, max_train_acc, best_train_epoch, train_loss_epoch, best_epoch_bins)
-			logger.info('Scores saved at {}'.format(config.result_path))		
+			logger.info('Scores saved at {}'.format(config.result_path))
 
 
 
@@ -401,9 +400,9 @@ def run_validation(config, model, val_loader, voc, device, logger):
 			source, targets, word_lens = val_loader.get_batch(i)
 			source, targets, word_lens = source.to(device), targets.to(device), word_lens.to(device)
 			acc, hidden = model.evaluator(source, targets, word_lens, hidden, config)
-			val_acc_epoch += acc 
+			val_acc_epoch += acc
 			batch_num += 1
-	
+
 	if batch_num != val_loader.num_batches:
 		pdb.set_trace()
 
@@ -433,7 +432,7 @@ def run_test(config, model, test_loader, voc, device, logger):
 			source, targets, word_lens = source.to(device), targets.to(device), word_lens.to(device)
 			acc, hidden = model.evaluator(source, targets, word_lens, hidden, config)
 			test_acc_epoch += acc
-			
+
 			source_str = test_loader.data[i]
 			source_len = len(source_str)
 			source_depth = test_loader.Lang.depth_counter(source_str).sum(1).max()
@@ -455,5 +454,3 @@ def run_test(config, model, test_loader, voc, device, logger):
 					)
 
 	return test_acc_epoch, test_analysis_df	
-
-
