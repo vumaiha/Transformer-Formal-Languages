@@ -46,7 +46,7 @@ def load_data(config, logger, voc = None):
 			voc (Vocabulary Object) : Provided only during test time
 
 		Returns:
-			dataobject (dict) 
+			dataobject (dict)
 	'''
 	if config.mode == 'train':
 		logger.debug('Loading Training Data...')
@@ -133,7 +133,7 @@ def load_data(config, logger, voc = None):
 # 			logger (logger) : logger object for logging
 
 # 		Returns:
-# 			dataloader(s) 
+# 			dataloader(s)
 # 	'''
 # 	if config.mode == 'train':
 # 		logger.debug('Loading Training Data...')
@@ -152,7 +152,7 @@ def load_data(config, logger, voc = None):
 
 # 		train_corpus = Corpus(train_path, voc, debug = config.debug)
 # 		val_corpus = Corpus(val_path, voc, debug = config.debug)
-		
+
 # 		train_loader = Sampler(train_corpus, config.batch_size, config.bptt)
 # 		val_loader = Sampler(val_corpus, config.batch_size, config.bptt)
 
@@ -210,7 +210,7 @@ def main():
 	log_file = os.path.join(config.log_path, 'log.txt')
 
 	if config.results:
-		config.result_path = os.path.join(result_folder, 'val_results_{}.json'.format(config.dataset))
+		config.result_path = os.path.join(result_folder, 'val_results_{0}_{1}.json'.format(config.dataset,config.model_type))
 
 	if is_train:
 		create_save_directories(config.log_path, config.model_path)
@@ -230,7 +230,7 @@ def main():
 		train_loader, val_loader_bins, voc  = load_data(config, logger)
 
 		logger.info(
-			'Vocab Created with number of words : {}'.format(voc.nwords))		
+			'Vocab Created with number of words : {}'.format(voc.nwords))
 
 		with open(vocab_path, 'wb') as f:
 			pickle.dump(voc, f, protocol=pickle.HIGHEST_PROTOCOL)
@@ -257,7 +257,7 @@ def main():
 
 
 	if is_train:
-		
+
 		max_val_acc = 0.0
 		epoch_offset= 0
 
@@ -299,7 +299,7 @@ def main():
 			config.bias = bias
 			config.extraffn = extraffn
 			# To do: remove it later
-			#config.num_labels =2  
+			#config.num_labels =2
 
 		model = build_model(config=config, voc=voc, device=device, logger=logger)
 		checkpoint = get_latest_checkpoint(config.model_path, logger)
