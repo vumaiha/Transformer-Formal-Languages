@@ -120,7 +120,7 @@ for combination in combinations:
             num+=1
         if num != 1:
             print("The is no or multiple max_val_acc_bin1 values")
-            results_file.write("NA\t")
+            results_file.write("NA\n")
             continue
 
         results_file.write(str(max_val_acc_bin1) + "\n")
