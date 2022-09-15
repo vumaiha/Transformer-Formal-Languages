@@ -86,6 +86,7 @@ for combination in combinations:
     if return_code!= 0:
         print(err)
         print ("No output for the command : " + command)
+        results_file.write("NA\tNA\n")
         continue
 
     # Try to get the saved file name
