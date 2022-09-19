@@ -1,11 +1,20 @@
 import subprocess
 import sys
 import json
+from pathlib import Path
+import os
 
 # This scripts runs the configurations given in the following 
 # list of dictionaries
 DATASET="Tomita-4"
 PYTHON_COMMAND=sys.executable
+RUN_POOL_DIR="./run_pool"
+PENDING_DIR=RUN_POOL_DIR + "/pending"
+DONE_DIR=RUN_POOL_DIR + "/done"
+LOGS_DIR=RUN_POOL_DIR + "/logs"
+RESULTS_DIR=RUN_POOL_DIR + "/results"  
+RUNNING_DIR=RUN_POOL_DIR + "/running"
+
 
 hyperparameters={
         "d_model": {"begin":2, "end":32},
@@ -14,6 +23,18 @@ hyperparameters={
         "lr": [0.01,0.001],
         "run_params": ["-model_type SAN", "-model_type SAN -pos_encode","-model_type SAN-Rel"]
         }
+
+def rm_tree(pth):
+    pth = Path(pth)
+    for child in pth.glob('*'):
+        if child.is_file():
+            child.unlink()
+        else:
+            rm_tree(child)
+    try:
+        pth.rmdir()
+    except:
+        pass
 
 
 def run_cmd(cmd):
@@ -40,10 +61,24 @@ def combine(elems):
         return [[]]
     return [[x, *y] for x in elems[0] for y in combine(elems[1:])]
 
-results_file = open ("results.tsv", "w")
+
+# Remove the pool directory and recreate
+rm_tree(RUN_POOL_DIR)
+os.mkdir(RUN_POOL_DIR)
+os.mkdir(PENDING_DIR)
+os.mkdir(DONE_DIR)
+os.mkdir(LOGS_DIR)
+os.mkdir(RESULTS_DIR)
+os.mkdir(RUNNING_DIR)
+
+
+
+
+results_file = open (RUN_POOL_DIR+"/head.tsv", "w")
 for par in hyperparameters:
     results_file.write(par + "\t")
 results_file.write("max_val_acc_bin0\tmax_val_acc_bin1\n")
+results_file.close()
 
 # Iterate over hyperparameter combinations
 iteration_dict = {}
@@ -72,64 +107,14 @@ for combination in combinations:
         else:
             name += " -" + par[0] + " " + par[1]
         config[par[0]]=par[1]
-    for par in hyperparameters:
-        results_file.write(config[par] + "\t")
 
     run_name = name.strip().replace(" ", "_").replace("-","").replace("_run_params","")
-    command += " -epochs 25 -run_name " + run_name + name + " -gpu 0"
-    print("Running: " + command)
-    out, err, return_code = run_cmd(command.split(" "))
-    out = str(out)
-    err = str(err)
+    command += " -epochs 25 -run_name " + run_name + name 
+    f=open(PENDING_DIR + "/" + run_name + ".command", "w")
+    f.write(command)
+    f.close()
 
-    # If there is no proper output:
-    if return_code!= 0:
-        print(err)
-        print ("No output for the command : " + command)
-        results_file.write("NA\tNA\n")
-        continue
-
-    # Try to get the saved file name
-    filename=""
-    index1=out.find("Scores saved at ")
-    if index1!= -1:
-        index2=out.find("\\n", index1)
-        filename=out[index1+16:index2].strip()
-
-    # Read the file
-    if filename!="":
-        f = open(filename)
-        data = json.load(f)
-        data = data[run_name]
-        gen=item_generator(data,"max_val_acc_bin0")
-
-        num=0
-        for i in gen:
-            max_val_acc_bin0 = i
-            num +=1
-        if num != 1:
-            print("The is no or multiple max_val_acc_bin0 values")
-            results_file.write("NA\t")
-            continue
-
-        results_file.write(str(max_val_acc_bin0) + "\t")
-
-        gen=item_generator(data,"max_val_acc_bin1")
-        num=0
-        for i in gen:
-            max_val_acc_bin1 = i
-            num+=1
-        if num != 1:
-            print("The is no or multiple max_val_acc_bin1 values")
-            results_file.write("NA\n")
-            continue
-
-        results_file.write(str(max_val_acc_bin1) + "\n")
-
-    else:
-        prin(err)
-        print ("No output for the command : " + command)
-        continue
-
-
-#run_command = "python -m src.main -mode train -run_name testrun -dataset Tomita-4 -model_type SAN -gpu 0"
+    f=open(RESULTS_DIR + "/" + run_name + ".result", "w")
+    for par in hyperparameters:
+        f.write(config[par] + "\t")
+    f.close()
