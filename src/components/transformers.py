@@ -76,7 +76,7 @@ class TransformerModel(nn.Module):
 			inp = src
 			for layer in encoder_layers:
 				attn = layer.self_attn(inp, inp, inp, attn_mask = self.src_mask)[1]
-				inp = layer(inp, src_mask = self.src_mask) 
+				inp = layer(inp, src_mask = self.src_mask)
 				attns.append(attn)
 
 
@@ -84,10 +84,10 @@ class TransformerModel(nn.Module):
 		output = self.decoder(transformer_output)
 		output = self.sigmoid(output)
 		# return F.log_softmax(output, dim=-1)
-		
+
 		if get_attns:
-			return output, attns	
-		
+			return output, attns
+
 		if get_encoder_reps:
 			return output, transformer_output
 
@@ -99,10 +99,10 @@ class TransformerXLModel(nn.Module):
 		self.config = TransfoXLConfig(	vocab_size = ntoken, cutoffs = [],
 									 	d_model = d_model, d_embed = d_model,
 										n_head = nhead, d_inner = d_ffn,
-									 	n_layer = nlayers, tie_weights = False,
+									 	n_layer = nlayers, tgt_len = 150,tie_weights = False,
 										d_head = d_model // nhead,adaptive = False,
 										dropout = dropout)
-		
+
 		self.transformer_encoder = TransfoXLModel(self.config)
 		self.decoder = nn.Linear(d_model, noutputs)
 		self.sigmoid= nn.Sigmoid()
@@ -144,7 +144,7 @@ class SimpleTransformerModel(nn.Module):
 		self_attn = MultiHeadedAttention(nhead, d_model, dropout, bias,
 										freeze_q, freeze_k,
 										freeze_v, zero_keys)
-		if not posffn: 
+		if not posffn:
 			encoder_layers = EncoderLayer(self_attn)
 		else:
 			feed_forward = nn.Sequential(nn.Linear(d_model, d_ffn), nn.ReLU(), nn.Linear(d_ffn, d_model))
@@ -157,7 +157,7 @@ class SimpleTransformerModel(nn.Module):
 			self.decoder.requires_grad_(False)
 
 		#self.init_weights()
-		
+
 
 	def _generate_square_subsequent_mask(self, sz):
 		mask = (torch.triu(torch.ones(sz, sz)) == 1).transpose(0, 1)
@@ -187,7 +187,3 @@ class SimpleTransformerModel(nn.Module):
 		output = self.sigmoid(output)
 
 		return output
-		
-
-
-
