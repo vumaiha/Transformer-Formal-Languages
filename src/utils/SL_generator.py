@@ -7,7 +7,7 @@ class SLLanguage ():
         self.sigma = sigma[:nsigma+1]
         self.k = k
         self.nsigma_k = nsigma_k
-        self.type = type %can be uniform, alternating, random
+        self.type = type #can be uniform, alternating, random
 
     def generate_bannedkgram ():
         bannedkgram = ''
