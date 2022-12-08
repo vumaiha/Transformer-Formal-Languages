@@ -18,6 +18,7 @@ from src.utils import nonstarfree_generator
 from src.utils import crl_generator
 from src.utils import tomita_generator
 from src.utils.boolean_expr_generator import NAryBooleanExpLang
+from src.utils import SL_generator
 from src.utils.sentence_processing import sents_to_idx
 
 class DyckCorpus(object):
@@ -42,7 +43,7 @@ class RDyckCorpus(object):
 	def __init__(self, p_val, q_val, lower_window, upper_window, size, debug = False):
 		if debug:
 			size = 100
-		
+
 		self.Lang = RDyck1Language(p_val, q_val)
 		self.source, self.target, _ = self.generate_data(size, lower_window, upper_window)
 		self.noutputs = 2
@@ -105,6 +106,16 @@ class ParityCorpus(object):
 		inputs, outputs = self.Lang.training_set_generator(size, lower_window, upper_window)
 		return inputs, outputs
 
+class SLCorpus(object):
+	def __init__(self, n_letters, k, nsigma_k, n_kgrams, type, size, min_length, max_length, debug = False):
+		self.Lang = SLLanguage(n_letters, k, nsigma_k, n_kgrams, type)
+		self.source, self.target = self.generate_data(size, min_length, max_length)
+		self.noutputs = self.Lang.n_letters #what is this?
+
+	def generate_data(self, num, min_length, max_length):
+		inputs, outputs = self.Lang.training_set_generator(size, min_length, max_length)
+		return inputs, outputs
+
 class CRLCorpus(object):
 
 	def __init__(self,n, lower_window, upper_window, size, debug = False):
@@ -125,7 +136,7 @@ class StarFreeCorpus(object):
 		self.Lang = getattr(starfree_generator, lang+'Language')(n)
 		self.unique = unique
 		self.source, self.target = self.generate_data(size, lower_window, upper_window)
-		self.noutputs = self.Lang.n_letters		
+		self.noutputs = self.Lang.n_letters
 
 	def generate_data(self, size, lower_window, upper_window):
 		inputs, outputs = self.Lang.training_set_generator(size, lower_window, upper_window)
@@ -169,12 +180,12 @@ class TomitaCorpus(object):
 
 	def generate_data(self, size, lower_window, upper_window):
 		inputs, outputs = self.Lang.training_set_generator(size, lower_window, upper_window, self.leak)
-		
+
 		if self.unique:
 			inputs, outputs = zip(*set(zip(inputs, outputs)))
 			inputs = list(inputs)
 			outputs = list(outputs)
-		
+
 		return inputs, outputs
 
 class BooleanExprCorpus(object):
@@ -237,4 +248,3 @@ class Sampler(object):
 
 	def __len__(self):
 		return len(self.data)
-

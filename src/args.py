@@ -88,7 +88,7 @@ def build_parser():
 	parser.add_argument('-heads', type=int, default=1, help='Number of Attention heads in each layer')
 	parser.add_argument('-pos_encode', dest='pos_encode', action='store_true', help='Whether to use position encodings')
 	parser.add_argument('-no-pos_encode', dest='pos_encode', action='store_false', help='Whether to use position encodings')
-	parser.set_defaults(pos_encode=False)	
+	parser.set_defaults(pos_encode=False)
 	parser.add_argument('-max_period', type = float, default = 10000.0)
 	parser.add_argument('-pos_encode_type', type = str, default = 'absolute', choices = ['absolute', 'cosine_npi','learnable'])
 	parser.add_argument('-posffn', dest='posffn', action='store_true', help='Whether to use position encodings')
@@ -149,6 +149,13 @@ def build_parser():
 
 
 	parser.add_argument('-bins', type=int, default=2, help='Number of validation bins')
+
+	#SL specific parameters
+	parser.add_argument('-n_letters', type=int, default=5, help='Size of alphabet')
+	parser.add_argument('-k', type=int, default=2, help='Size of k-grams')
+	parser.add_argument('-nsigma_k', type=int, default=1, help='Size of alphabet in kgrams')
+	parser.add_argument('-n_kgrams', type=int, default=1, help='Number of banned kgrams')
+	parser.add_argument('-type', type=str, default="uniform", help='Type of kgrams')
 
 	## Generate Data parameters
 	#parser.add_argument('-bins', type=int, default=2, help='Number of validation bins')

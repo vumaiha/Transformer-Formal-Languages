@@ -20,7 +20,7 @@ except ImportError:
 from src.args import build_parser
 from src.utils.helper import *
 from src.utils.logger import get_logger, print_log, store_results
-from src.dataloader import DyckCorpus, Sampler, CounterCorpus, ShuffleCorpus, ParityCorpus, CRLCorpus, StarFreeCorpus, NonStarFreeCorpus, TomitaCorpus, BooleanExprCorpus, RDyckCorpus, CAB_n_ABDCorpus
+from src.dataloader import SLCorpus, DyckCorpus, Sampler, CounterCorpus, ShuffleCorpus, ParityCorpus, CRLCorpus, StarFreeCorpus, NonStarFreeCorpus, TomitaCorpus, BooleanExprCorpus, RDyckCorpus, CAB_n_ABDCorpus
 from src.model import LanguageModel, build_model, train_model, run_validation
 from src.utils.dyck_generator import DyckLanguage
 from src.utils.shuffle_generator import ShuffleLanguage
@@ -35,7 +35,7 @@ def load_data(config, num_bins = 2):
 			config (dict) : configuration/args
 			num_bins (int) : Number of validation bins
 		Returns:
-			dataobject (dict) 
+			dataobject (dict)
 	'''
 	if config.mode == 'train':
 		#logger.debug('Loading Training Data...')
@@ -53,15 +53,15 @@ def load_data(config, num_bins = 2):
 				print("Generating Data for depths [{}, {}] and Lengths [{}, {}]".format(lower_depth, upper_depth, lower_window, upper_window))
 				val_corpus_bin = DyckCorpus(config.p_val, config.q_val, config.num_par, lower_window, upper_window, config.test_size, lower_depth, upper_depth, config.debug)
 				val_corpus_bins.append(val_corpus_bin)
-				
+
 				if config.vary_len:
 					lower_window = upper_window
 					upper_window = upper_window + config.len_incr
-				
+
 				if config.vary_depth:
 					lower_depth = upper_depth
 					upper_depth = upper_depth + config.depth_incr
-			
+
 		elif config.lang == 'Counter':
 			train_corpus 	= CounterCorpus( config.num_par, config.lower_window, config.upper_window, config.training_size, config.debug)
 			val_corpus_bins = [CounterCorpus( config.num_par, config.lower_window, config.upper_window, config.test_size, config.debug, unique = True)]
@@ -86,13 +86,26 @@ def load_data(config, num_bins = 2):
 			for i in range(num_bins):
 				print("Generating Data for depths [{}, {}] and Lengths [{}, {}]".format(lower_depth, upper_depth, lower_window, upper_window))
 				val_corpus_bin = ShuffleCorpus(config.p_val, config.q_val, config.num_par, lower_window, upper_window, config.test_size, lower_depth, upper_depth, config.debug)
-				val_corpus_bins.append(val_corpus_bin)				
+				val_corpus_bins.append(val_corpus_bin)
 				lower_window = upper_window
 				upper_window = upper_window + config.len_incr
-				
+
 				if config.vary_depth:
 					lower_depth = upper_depth
 					upper_depth = upper_depth + config.depth_incr
+
+		elif config.lang == 'SL':
+			print("Generating Training and Validation Bin0 Data for SL languages")
+			train_corpus = SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.training_size, config.lower_window, config.upper_window, debug = config.debug)
+			val_corpus_bins [SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.test_size, config.lower_window, config.upper_window, debug = config.debug)]
+			lower_window = config.upper_window  #doublecheck if this is right
+			upper_window = config.upper_window + config.len_incr
+			for i in range(num_bins):
+				print("Generating Data for [{}, {}]".format(lower_window, upper_window))
+				val_corpus_bin = SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.training_size, lower_window, upper_window, debug = config.debug)
+				val_corpus_bins.append(val_corpus_bin)
+				lower_window = upper_window
+				upper_windoes = upper_window + config.len_incr
 
 		elif config.lang == 'Parity':
 			print("Generating Training and Validation Bin0 Data")
@@ -110,6 +123,7 @@ def load_data(config, num_bins = 2):
 				val_corpus_bins.append(val_corpus_bin)
 				lower_window = upper_window
 				upper_window = upper_window + config.len_incr
+
 
 		elif config.lang == 'CRL':
 			print("Generating Training and Validation Bin0 Data")
@@ -153,7 +167,7 @@ def load_data(config, num_bins = 2):
 
 				for i in range(num_bins):
 					val_corpus_bin = TomitaCorpus(config.num_par, lower_window, upper_window, config.test_size, unique = True, leak = True, debug = config.debug)
-					val_corpus_bins.append(val_corpus_bin)		
+					val_corpus_bins.append(val_corpus_bin)
 
 
 		elif config.lang == 'AAStarBBStar':
@@ -199,7 +213,7 @@ def load_data(config, num_bins = 2):
 				val_corpus_bins.append(val_corpus_bin)
 				lower_window = upper_window
 				upper_window = upper_window + config.len_incr
-		
+
 		elif config.lang == 'CAB_n_ABD':
 			print("Generating Training and Validation Bin0 Data")
 			corpus = CAB_n_ABDCorpus(config.lower_window, config.upper_window, config.training_size + config.test_size, debug = config.debug)
@@ -330,7 +344,7 @@ def main():
 	with open(os.path.join(data_dir, 'train_tgt.txt'), 'w') as f:
 		f.write('\n'.join(train_corpus.target))
 	print("Done")
-	
+
 	print("Writing Val text files")
 	for i, val_corpus_bin in enumerate(val_corpus_bins):
 		with open(os.path.join(data_dir, 'val_src_bin{}.txt'.format(i)), 'w') as f:
@@ -353,11 +367,11 @@ def main():
 		val_lens_bins.append(val_lens)
 
 	info_dict = {}
-	info_dict['Lang'] = '{}-{}'.format(config.lang, config.num_par) 
+	info_dict['Lang'] = '{}-{}'.format(config.lang, config.num_par)
 	info_dict['Train Lengths'] = (min(train_lens), max(train_lens))
 	info_dict['Train Depths'] = (int(min(train_depths)), int(max(train_depths)))
 	info_dict['Train Size'] = len(train_corpus.source)
-	
+
 	for i, (val_lens, val_depths) in enumerate(zip(val_lens_bins, val_depths_bins)):
 		info_dict['Val Bin-{} Lengths'.format(i)] = (min(val_lens), max(val_lens))
 		info_dict['Val Bin-{} Depths'.format(i)] = (int(min(val_depths)), int(max(val_depths)))
