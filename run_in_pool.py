@@ -6,8 +6,8 @@ from pathlib import Path
 
 # This scripts runs the configurations given in the following 
 # list of dictionaries
-DATASET="Tomita-4"
-PYTHON_COMMAND=sys.executable
+DATASET="Shuffle-2"
+PYTHON_COMMAND="/storage/ahmetyi/anaconda3/envs/transformerFL/bin/python3"
 EXTRA_PARAMS= " -gpu 0"
 hyperparameters={
         "d_model": {"begin":2, "end":32},
@@ -26,6 +26,8 @@ logs_directory = 'run_pool/logs'
 def run_cmd(cmd):
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
     out, err = p.communicate()
+    print(out)
+    print(err)
     return (out,err, p.returncode)
 
 # Find the specific key's value recursively
@@ -89,6 +91,8 @@ while there_is_item:
         err = str(err)
 
         result_string = ""
+        print(out)
+        print(err)
         f=open(results_directory + "/" + task_name + ".result","r")
         result_string=f.readline().strip()
         f.close()
@@ -126,7 +130,7 @@ while there_is_item:
                 max_val_acc_bin0 = i
                 num +=1
             if num != 1:
-                log_file.write("The is no or multiple max_val_acc_bin0 values")
+                log_file.write("There is no or multiple max_val_acc_bin0 values")
                 results_file.write("NA\t")
                 results_file.close()
                 os.replace(running_file_name, done_file_name)
@@ -141,17 +145,33 @@ while there_is_item:
                 max_val_acc_bin1 = i
                 num+=1
             if num != 1:
-                log_file.write("The is no or multiple max_val_acc_bin1 values")
+                log_file.write("There is no or multiple max_val_acc_bin1 values")
+                results_file.write("NA\t")
+                results_file.close()
+                os.replace(running_file_name, done_file_name)
+                there_is_item=True
+                break
+
+            results_file.write(str(max_val_acc_bin1) + "\t")
+
+            gen=item_generator(data,"max_val_acc_bin2")
+            num=0
+            for i in gen:
+                max_val_acc_bin2 = i
+                num+=1
+            if num != 1:
+                log_file.write("There is no or multiple max_val_acc_bin2 values")
                 results_file.write("NA\n")
                 results_file.close()
                 os.replace(running_file_name, done_file_name)
                 there_is_item=True
                 break
 
-            results_file.write(str(max_val_acc_bin1) + "\n")
+            results_file.write(str(max_val_acc_bin2) + "\n")
+
 
         else:
-            prin(err)
+            print(err)
             log_file.write("No output for the command : " + command)
             there_is_item=True
             results_file.close()

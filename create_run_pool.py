@@ -6,8 +6,8 @@ import os
 
 # This scripts runs the configurations given in the following 
 # list of dictionaries
-DATASET="Tomita-4"
-PYTHON_COMMAND=sys.executable
+DATASET="Shuffle-2"
+PYTHON_COMMAND="/storage/ahmetyi/anaconda3/envs/transformerFL/bin/python3"
 RUN_POOL_DIR="./run_pool"
 PENDING_DIR=RUN_POOL_DIR + "/pending"
 DONE_DIR=RUN_POOL_DIR + "/done"
@@ -77,7 +77,7 @@ os.mkdir(RUNNING_DIR)
 results_file = open (RUN_POOL_DIR+"/head.tsv", "w")
 for par in hyperparameters:
     results_file.write(par + "\t")
-results_file.write("max_val_acc_bin0\tmax_val_acc_bin1\n")
+results_file.write("max_val_acc_bin0\tmax_val_acc_bin1\tmax_val_acc_bin2\n")
 results_file.close()
 
 # Iterate over hyperparameter combinations
