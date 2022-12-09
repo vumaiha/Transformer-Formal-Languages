@@ -7,7 +7,7 @@ import os
 # This scripts runs the configurations given in the following 
 # list of dictionaries
 DATASET="Shuffle-2"
-PYTHON_COMMAND="/storage/ahmetyi/anaconda3/envs/transformerFL/bin/python3"
+PYTHON_COMMAND="/itf-fi-ml/home/maihv/.conda/envs/transformers-fl/bin/python3"
 RUN_POOL_DIR="./run_pool"
 PENDING_DIR=RUN_POOL_DIR + "/pending"
 DONE_DIR=RUN_POOL_DIR + "/done"
@@ -109,7 +109,7 @@ for combination in combinations:
         config[par[0]]=par[1]
 
     run_name = name.strip().replace(" ", "_").replace("-","").replace("_run_params","")
-    command += " -epochs 25 -run_name " + run_name + name 
+    command += " -epochs 100 -run_name " + run_name + name 
     f=open(PENDING_DIR + "/" + run_name + ".command", "w")
     f.write(command)
     f.close()

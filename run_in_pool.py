@@ -7,7 +7,7 @@ from pathlib import Path
 # This scripts runs the configurations given in the following 
 # list of dictionaries
 DATASET="Shuffle-2"
-PYTHON_COMMAND="/storage/ahmetyi/anaconda3/envs/transformerFL/bin/python3"
+PYTHON_COMMAND="/itf-fi-ml/home/maihv/.conda/envs/transformers-fl/bin/python3"
 EXTRA_PARAMS= " -gpu 0"
 hyperparameters={
         "d_model": {"begin":2, "end":32},
