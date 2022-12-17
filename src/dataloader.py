@@ -13,12 +13,12 @@ from src.utils.reset_dyck_generator import RDyck1Language
 from src.utils.data_generator import CounterLanguage
 from src.utils.shuffle_generator import ShuffleLanguage
 from src.utils.parity_generator import ParityLanguage
+from src.utils.SL_generator import SLLanguage
 from src.utils import starfree_generator
 from src.utils import nonstarfree_generator
 from src.utils import crl_generator
 from src.utils import tomita_generator
 from src.utils.boolean_expr_generator import NAryBooleanExpLang
-from src.utils import SL_generator
 from src.utils.sentence_processing import sents_to_idx
 
 class DyckCorpus(object):
@@ -107,13 +107,13 @@ class ParityCorpus(object):
 		return inputs, outputs
 
 class SLCorpus(object):
-	def __init__(self, n_letters, k, nsigma_k, n_kgrams, type, size, min_length, max_length, debug = False):
+	def __init__(self, n_letters, k, nsigma_k, n_kgrams, type, size, lower_window, upper_window, debug = False):
 		self.Lang = SLLanguage(n_letters, k, nsigma_k, n_kgrams, type)
-		self.source, self.target = self.generate_data(size, min_length, max_length)
+		self.source, self.target = self.generate_data(size, lower_window, upper_window)
 		self.noutputs = self.Lang.n_letters #what is this?
 
-	def generate_data(self, num, min_length, max_length):
-		inputs, outputs = self.Lang.training_set_generator(size, min_length, max_length)
+	def generate_data(self, size, lower_window, upper_window):
+		inputs, outputs = self.Lang.training_set_generator(size, lower_window, upper_window)
 		return inputs, outputs
 
 class CRLCorpus(object):

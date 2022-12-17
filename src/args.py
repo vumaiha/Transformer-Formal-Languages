@@ -119,7 +119,7 @@ def build_parser():
 
 
 	# FL parameters
-	parser.add_argument('-lang', type=str, default='Dyck', choices= ['Dyck', 'Counter', 'Shuffle','Parity','CRL', 'AAStarBBStar','ABStar','ABABStar', 'AAStar','Tomita','Boolean','CStarAnCStar','CStarAnCStarBnCStar','CStarAnCStarv2','RDyck','CAB_n_ABD','AnStarA2','D_n'], help='Formal Language')
+	parser.add_argument('-lang', type=str, default='Dyck', choices= ['Dyck', 'Counter', 'Shuffle','Parity','SL','CRL', 'AAStarBBStar','ABStar','ABABStar', 'AAStar','Tomita','Boolean','CStarAnCStar','CStarAnCStarBnCStar','CStarAnCStarv2','RDyck','CAB_n_ABD','AnStarA2','D_n'], help='Formal Language')
 	parser.add_argument('-lower_window', type=int, default=2, help='Lower Length Window')
 	parser.add_argument('-upper_window', type=int, default=100, help='Upper Length Window')
 

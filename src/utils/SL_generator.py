@@ -26,21 +26,22 @@ class SLLanguage ():
                 return False
         return True
 
-    def generate_bannedkgrams ():
+    def generate_bannedkgrams (self):
         bannedkgrams = []
         bannedkgram_sigma = np.random.choice(self.sigma, self.nsigma_k, replace=False)
-        while i < n_kgrams + 1:
+        i = 0
+        while i < self.n_kgrams:
             bannedkgram = ''
             if self.nsigma_k == 1:  # type  is uniform
                 while len(bannedkgram)<self.k:
                     bannedkgram += bannedkgram_sigma[0]
-                    bannedkgrams.append(bannedkgram)
+                bannedkgrams.append(bannedkgram)
             i += 1
             # elif:
             #     if self.type == 'random':
             #         while len(bannedkgram)<self.k:
             #         #write code to generate random string using all elements of bannedkgram_sigma
-        print("List of banned k-grams:" + bannedkgrams)
+        print("List of banned k-grams:" + ' '.join(bannedkgrams))
         return bannedkgrams
 
     # def generate_string (self, bannedkgrams, length): #for now we will just generate strings where we directly input the banned kgram
@@ -52,14 +53,14 @@ class SLLanguage ():
         length = np.random.randint(min_length, max_length)
         arr = []
         while len(arr) < num:
-            string = self.get_sigma_star(self.sigma, length)
+            string = get_sigma_star(self.sigma, length)
             if self.belongs_to_lang (string, self.bannedkgrams) and string not in arr:
                 arr.append(string)
                 print("Generated {}/{} samples".format(len(arr), num), end = '\r', flush = True)
         return arr
 
     def output_generator(self, seq):
-        out_string = ''
+        output_seq = ''
         for i in range(1, len(seq)+1):
             part_seq = seq[:i]
             for sigma in self.sigma:
@@ -67,9 +68,9 @@ class SLLanguage ():
                     output_seq += '1'
                 else:
                     output_seq += '0'
-        return out_string
+        return output_seq
 
-    def training_set_generator (self, num, min_legnth, max_length):
+    def training_set_generator (self, num, min_length, max_length):
         input_arr = self.generate_list (num, min_length, max_length)
         output_arr = []
         for seq in input_arr:

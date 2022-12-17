@@ -16,7 +16,6 @@ try:
 	import cPickle as pickle
 except ImportError:
 	import pickle
-
 from src.args import build_parser
 from src.utils.helper import *
 from src.utils.logger import get_logger, print_log, store_results
@@ -97,7 +96,7 @@ def load_data(config, num_bins = 2):
 		elif config.lang == 'SL':
 			print("Generating Training and Validation Bin0 Data for SL languages")
 			train_corpus = SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.training_size, config.lower_window, config.upper_window, debug = config.debug)
-			val_corpus_bins [SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.test_size, config.lower_window, config.upper_window, debug = config.debug)]
+			val_corpus_bins = [SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.test_size, config.lower_window, config.upper_window, debug = config.debug)]
 			lower_window = config.upper_window  #doublecheck if this is right
 			upper_window = config.upper_window + config.len_incr
 			for i in range(num_bins):
@@ -105,7 +104,7 @@ def load_data(config, num_bins = 2):
 				val_corpus_bin = SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.training_size, lower_window, upper_window, debug = config.debug)
 				val_corpus_bins.append(val_corpus_bin)
 				lower_window = upper_window
-				upper_windoes = upper_window + config.len_incr
+				upper_window = upper_window + config.len_incr
 
 		elif config.lang == 'Parity':
 			print("Generating Training and Validation Bin0 Data")
