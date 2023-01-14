@@ -1,6 +1,7 @@
 import numpy as np
 
 alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+seed = np.random.randint (0,100000000)
 
 def get_sigma_star(sigma, length):
     string = ''
@@ -28,6 +29,7 @@ class SLLanguage ():
 
     def generate_bannedkgrams (self):
         bannedkgrams = []
+        np.random.seed(seed)
         bannedkgram_sigma = np.random.choice(self.sigma, self.nsigma_k, replace=False)
         i = 0
         while i < self.n_kgrams:
@@ -41,7 +43,7 @@ class SLLanguage ():
             #     if self.type == 'random':
             #         while len(bannedkgram)<self.k:
             #         #write code to generate random string using all elements of bannedkgram_sigma
-        print("List of banned k-grams:" + ' '.join(bannedkgrams))
+        print("List of banned k-grams:" + ' '.join(bannedkgrams) + '\n')
         return bannedkgrams
 
     # def generate_string (self, bannedkgrams, length): #for now we will just generate strings where we directly input the banned kgram
@@ -50,9 +52,11 @@ class SLLanguage ():
     #         return seq
 
     def generate_list (self, num, min_length, max_length):
-        length = np.random.randint(min_length, max_length)
         arr = []
         while len(arr) < num:
+            np.random.seed()
+            length = np.random.randint(min_length, max_length)
+            # print('Length: {}, min: {}, max {}'.format(length, min_length, max_length), end = '\r', flush = True)
             string = get_sigma_star(self.sigma, length)
             if self.belongs_to_lang (string, self.bannedkgrams) and string not in arr:
                 arr.append(string)
@@ -83,3 +87,7 @@ class SLLanguage ():
             letter_id = self.char2id[letter]
             tensor[li][letter_id] = 1.0
         return tensor
+
+    def depth_counter(self, seq):
+        ## To Do. The current implementation is not right, just a placeholder
+        return np.ones((len(seq), 1))
