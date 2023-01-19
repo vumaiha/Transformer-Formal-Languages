@@ -38,6 +38,18 @@ class SLLanguage ():
                 while len(bannedkgram)<self.k:
                     bannedkgram += bannedkgram_sigma[0]
                 bannedkgrams.append(bannedkgram)
+            elif self.type == 'alternating' and self.k%len(bannedkgram_sigma)==0:
+                kgramunit = ''
+                print(' '.join(bannedkgram_sigma))
+                kgramunit = ''.join(bannedkgram_sigma)
+                print(kgramunit)
+                while len(bannedkgram)<self.k:
+                    bannedkgram += kgramunit
+                bannedkgrams.append(bannedkgram)
+            elif self.type == 'random':
+                while len(bannedkgram)<self.k:
+                    bannedkgram += np.random.choice(bannedkgram_sigma)
+                bannedkgrams.append(bannedkgram)
             i += 1
             # elif:
             #     if self.type == 'random':
