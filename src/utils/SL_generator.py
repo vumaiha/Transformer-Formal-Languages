@@ -65,14 +65,18 @@ class SLLanguage ():
 
     def generate_list (self, num, min_length, max_length):
         arr = []
+        i = 0
         while len(arr) < num:
-            np.random.seed()
-            length = np.random.randint(min_length, max_length)
-            # print('Length: {}, min: {}, max {}'.format(length, min_length, max_length), end = '\r', flush = True)
-            string = get_sigma_star(self.sigma, length)
-            if self.belongs_to_lang (string, self.bannedkgrams) and string not in arr:
-                arr.append(string)
-                print("Generated {}/{} samples".format(len(arr), num), end = '\r', flush = True)
+            if i < 1000000: #stops generating strings after 1 million failures
+                np.random.seed()
+                length = np.random.randint(min_length, max_length)
+                # print('Length: {}, min: {}, max {}'.format(length, min_length, max_length), end = '\r', flush = True)
+                string = get_sigma_star(self.sigma, length)
+                if self.belongs_to_lang (string, self.bannedkgrams) and string not in arr:
+                    arr.append(string)
+                    print("Generated {}/{} samples".format(len(arr), num), end = '\r', flush = True)
+                else:
+                    i += 1
         return arr
 
     def output_generator(self, seq):

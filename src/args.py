@@ -151,7 +151,7 @@ def build_parser():
 	parser.add_argument('-bins', type=int, default=2, help='Number of validation bins')
 
 	#SL specific parameters
-	parser.add_argument('-n_letters', type=int, default=5, help='Size of alphabet')
+	parser.add_argument('-n_letters', type=int, default=4, help='Size of alphabet')
 	parser.add_argument('-k', type=int, default=2, help='Size of k-grams')
 	parser.add_argument('-nsigma_k', type=int, default=1, help='Size of alphabet in kgrams')
 	parser.add_argument('-n_kgrams', type=int, default=1, help='Number of banned kgrams')
