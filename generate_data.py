@@ -80,11 +80,9 @@ def load_data(config, num_bins = 2):
 			val_corpus_bins = [ShuffleCorpus(config.p_val, config.q_val, config.num_par, config.lower_window, config.upper_window, config.test_size, config.lower_depth, config.upper_depth, config.debug)]
 			lower_window = config.upper_window + 2
 			upper_window = config.upper_window + config.len_incr
-			lower_depth = config.bin1_lower_depth
-			upper_depth = config.bin1_upper_depth
 			for i in range(num_bins):
-				print("Generating Data for depths [{}, {}] and Lengths [{}, {}]".format(lower_depth, upper_depth, lower_window, upper_window))
-				val_corpus_bin = ShuffleCorpus(config.p_val, config.q_val, config.num_par, lower_window, upper_window, config.test_size, lower_depth, upper_depth, config.debug)
+				print("Generating Data for depths [{}, {}] and Lengths [{}, {}]".format(config.lower_depth, config.upper_depth, lower_window, upper_window))
+				val_corpus_bin = ShuffleCorpus(config.p_val, config.q_val, config.num_par, lower_window, upper_window, config.test_size, config.lower_depth, config.upper_depth, config.debug)
 				val_corpus_bins.append(val_corpus_bin)
 				lower_window = upper_window
 				upper_window = upper_window + config.len_incr
@@ -97,11 +95,11 @@ def load_data(config, num_bins = 2):
 			print("Generating Training and Validation Bin0 Data for SL languages")
 			train_corpus = SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.training_size, config.lower_window, config.upper_window, debug = config.debug)
 			val_corpus_bins = [SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.test_size, config.lower_window, config.upper_window, debug = config.debug)]
-			lower_window = config.upper_window  #doublecheck if this is right
+			lower_window = config.upper_window + 1  #doublecheck if this is right
 			upper_window = config.upper_window + config.len_incr
 			for i in range(num_bins):
 				print("Generating Data for [{}, {}]".format(lower_window, upper_window))
-				val_corpus_bin = SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.training_size, lower_window, upper_window, debug = config.debug)
+				val_corpus_bin = SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.test_size, lower_window, upper_window, debug = config.debug)
 				val_corpus_bins.append(val_corpus_bin)
 				lower_window = upper_window
 				upper_window = upper_window + config.len_incr

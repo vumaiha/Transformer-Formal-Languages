@@ -58,25 +58,36 @@ class SLLanguage ():
         print("List of banned k-grams:" + ' '.join(bannedkgrams) + '\n')
         return bannedkgrams
 
-    # def generate_string (self, bannedkgrams, length): #for now we will just generate strings where we directly input the banned kgram
-    #     seq = get_sigma_star(self.sigma, length)  #generate a string in sigma*
-    #     if self.belongs_to_lang (seq, bannedkgrams):
-    #         return seq
+    def generate_string (self, bannedkgrams, min_length, max_length):
+        string = ''
+        bannedkgram = bannedkgrams[0]  # assuming there is only one k-gram
+        np.random.seed()
+        poss_sigma = self.sigma.copy()
+        poss_sigma.remove(bannedkgram[-1])
+        length = np.random.randint(min_length, max_length)
+        string += np.random.choice(self.sigma)
+        while len(string) < length:
+            if string[-(self.k-1):] == bannedkgram[:-1]:
+                string += np.random.choice(poss_sigma)
+            else:
+                string += np.random.choice(self.sigma)
+        return string
 
     def generate_list (self, num, min_length, max_length):
         arr = []
         i = 0
-        while len(arr) < num:
-            if i < 1000000: #stops generating strings after 1 million failures
-                np.random.seed()
-                length = np.random.randint(min_length, max_length)
-                # print('Length: {}, min: {}, max {}'.format(length, min_length, max_length), end = '\r', flush = True)
-                string = get_sigma_star(self.sigma, length)
-                if self.belongs_to_lang (string, self.bannedkgrams) and string not in arr:
-                    arr.append(string)
-                    print("Generated {}/{} samples".format(len(arr), num), end = '\r', flush = True)
-                else:
-                    i += 1
+        while len(arr) < num and i < 1000000000: #stops generating strings after 1 million failures
+            print("i={}".format(i), end='\r', flush=True)
+            # np.random.seed()
+            # length = np.random.randint(min_length, max_length)
+            # print('Length: {}, min: {}, max {}'.format(length, min_length, max_length), end = '\r', flush = True)
+            # string = get_sigma_star(self.sigma, length)
+            string = self.generate_string (self.bannedkgrams, min_length, max_length)
+            if self.belongs_to_lang (string, self.bannedkgrams) and string not in arr:
+                arr.append(string)
+                print("Generated {}/{} samples".format(len(arr), num), end = '\r', flush = True)
+            else:
+                i += 1
         return arr
 
     def output_generator(self, seq):
