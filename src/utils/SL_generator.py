@@ -47,8 +47,12 @@ class SLLanguage ():
                     bannedkgram += kgramunit
                 bannedkgrams.append(bannedkgram)
             elif self.type == 'random':
+                bannedkgram = ''.join(bannedkgram_sigma)
                 while len(bannedkgram)<self.k:
                     bannedkgram += np.random.choice(bannedkgram_sigma)
+                bannedkgram_list = list(bannedkgram)
+                np.random.shuffle(bannedkgram_list)
+                bannedkgram = ''.join(bannedkgram_list)
                 bannedkgrams.append(bannedkgram)
             i += 1
             # elif:
