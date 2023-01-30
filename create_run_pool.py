@@ -21,7 +21,7 @@ hyperparameters={
         "depth": {"begin":1, "end":4},
         "heads": {"begin":1, "end":4}, 
         "lr": [0.01,0.001],
-        "run_params": ["-model_type SAN", "-model_type SAN -pos_encode","-model_type SAN-Rel"]
+        "run_params": ["-model_type SAN", "-model_type SAN -pos_encode","-model_type SAN-Rel -tgt_len 200", "-model_type SAN-Rel -tgt_len 2"]
         }
 
 def rm_tree(pth):

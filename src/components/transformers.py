@@ -94,12 +94,12 @@ class TransformerModel(nn.Module):
 		return output
 
 class TransformerXLModel(nn.Module):
-	def __init__(self, ntoken,noutputs, d_model, nhead, d_ffn, nlayers, dropout=0.5, use_embedding=False):
+	def __init__(self, ntoken,noutputs, d_model, nhead, d_ffn, nlayers, tgt_len, dropout=0.5, use_embedding=False):
 		super(TransformerXLModel, self).__init__()
 		self.config = TransfoXLConfig(	vocab_size = ntoken, cutoffs = [],
 									 	d_model = d_model, d_embed = d_model,
 										n_head = nhead, d_inner = d_ffn,
-									 	n_layer = nlayers, tgt_len = 150,tie_weights = False,
+									 	n_layer = nlayers, tgt_len = tgt_len, tie_weights = False,
 										d_head = d_model // nhead,adaptive = False,
 										dropout = dropout)
 

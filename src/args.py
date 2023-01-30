@@ -89,6 +89,7 @@ def build_parser():
 	parser.add_argument('-pos_encode', dest='pos_encode', action='store_true', help='Whether to use position encodings')
 	parser.add_argument('-no-pos_encode', dest='pos_encode', action='store_false', help='Whether to use position encodings')
 	parser.set_defaults(pos_encode=False)
+	parser.add_argument('-tgt_len', type=int, default = 200, help= 'Window for relative positional encoding')
 	parser.add_argument('-max_period', type = float, default = 10000.0)
 	parser.add_argument('-pos_encode_type', type = str, default = 'absolute', choices = ['absolute', 'cosine_npi','learnable'])
 	parser.add_argument('-posffn', dest='posffn', action='store_true', help='Whether to use position encodings')

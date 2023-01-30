@@ -319,7 +319,11 @@ def main():
 
 	print("Loading Data!")
 	train_corpus, val_corpus_bins = load_data(config, num_bins = config.bins)
-	data_dir = os.path.join('data', config.dataset)
+	if config.lang == 'SL':
+		SL_data_name = config.dataset + '_' + str(config.n_letters) + '_' + str(config.k) + '_' + str(config.nsigma_k) + '_' + config.type[0] + '-' + train_corpus.bannedkgrams[0]
+		data_dir = os.path.join('data', SL_data_name)
+	else:
+		data_dir = os.path.join('data', config.dataset)
 
 	if os.path.exists(data_dir) == False:
 		os.mkdir(data_dir)
@@ -374,7 +378,7 @@ def main():
 		info_dict['Val Bin-{} Depths'.format(i)] = (int(min(val_depths)), int(max(val_depths)))
 		info_dict['Val Bin-{} Size'.format(i)] = len(val_corpus_bins[i].source)
 
-	with open(os.path.join('data', config.dataset, 'data_info.json'), 'w') as f:
+	with open(os.path.join(data_dir, 'data_info.json'), 'w') as f:
 		json.dump(obj = info_dict, fp = f)
 
 	print("Done")
