@@ -74,7 +74,7 @@ class LanguageModel(nn.Module):
 												zero_keys = self.config.zero_k, pos_encode_type= self.config.pos_encode_type,
 												max_period = self.config.max_period).to(self.device)
 		elif self.config.model_type == 'SAN-Rel':
-			self.model = TransformerXLModel(self.voc.nwords, self.voc.noutputs, self.config.d_model, self.config.heads, self.config.d_ffn, self.config.depth, self.config.dropout, self.config.tgt_len).to(self.device)
+			self.model = TransformerXLModel(self.voc.nwords, self.voc.noutputs, self.config.d_model, self.config.heads, self.config.d_ffn, self.config.depth, self.config.tgt_len, self.config.dropout).to(self.device)
 		elif self.config.model_type == 'Mogrify':
 			self.model = MogrifierLSTMModel(self.config.cell_type, self.voc.nwords, self.config.emb_size, self.config.hidden_size, self.config.depth, self.config.dropout, self.config.tied).to(self.device)
 		elif self.config.model_type == 'SARNN':
