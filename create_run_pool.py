@@ -6,7 +6,7 @@ import os
 
 # This scripts runs the configurations given in the following 
 # list of dictionaries
-DATASET="Shuffle-2"
+DATASET="SL_2_2_1_u-bb"
 PYTHON_COMMAND="/itf-fi-ml/home/maihv/.conda/envs/transformers-fl/bin/python3"
 RUN_POOL_DIR="./run_pool"
 PENDING_DIR=RUN_POOL_DIR + "/pending"
