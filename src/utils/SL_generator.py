@@ -114,11 +114,14 @@ class SLLanguage ():
             output_arr.append (self.output_generator (seq))
         return input_arr, output_arr
 
-    def lineToTensorOutput(self, line):
-        tensor = torch.zeros(len(line), self.n_letters)
-        for li, letter in enumerate(line):
-            letter_id = self.char2id[letter]
-            tensor[li][letter_id] = 1.0
+    def lineToTensorOutput(self, line): #needs to be rewritten to match SL (instead of four, has to be vocab)
+        assert len(line) % self.n_letters == 0
+        parts = textwrap.wrap(line, self.n_letters)
+        tensor = []
+        for i, part in enumerate(parts):
+            tensor.append(list(map(float, list(part))))
+
+        tensor = torch.tensor(tensor)
         return tensor
 
     def depth_counter(self, seq):
