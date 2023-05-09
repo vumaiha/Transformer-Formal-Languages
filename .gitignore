@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#for testing
+open-pk.py
+*.tsv
+
 # C extensions
 *.so
 
