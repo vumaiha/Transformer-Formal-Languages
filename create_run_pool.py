@@ -6,7 +6,7 @@ import os
 
 # This scripts runs the configurations given in the following 
 # list of dictionaries
-DATASET="SL_4_6_3_a-abdabd"
+DATASET="SL_2_3_1_u-bbb"
 PYTHON_COMMAND="/itf-fi-ml/home/maihv/.conda/envs/transformers-fl/bin/python3"
 RUN_POOL_DIR="./run_pool"
 PENDING_DIR=RUN_POOL_DIR + "/pending"
@@ -18,10 +18,10 @@ RUNNING_DIR=RUN_POOL_DIR + "/running"
 
 hyperparameters={
         "d_model": {"begin":2, "end":32},
-        "depth": {"begin":1, "end":4},
+        "depth": {"begin":1, "end":2},
         "heads": {"begin":1, "end":4}, 
         "lr": [0.01,0.001],
-        "run_params": ["-model_type SAN", "-model_type SAN -pos_encode","-model_type SAN-Rel -tgt_len 200", "-model_type SAN-Rel -tgt_len 6", "-model_type SAN-Rel -tgt_len 3"]
+        "run_params": ["-model_type SAN","-model_type SAN -pos_encode"]
         }
 
 def rm_tree(pth):

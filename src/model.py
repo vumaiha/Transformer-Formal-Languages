@@ -104,6 +104,11 @@ class LanguageModel(nn.Module):
 		if config.model_type == 'RNN':
 			output, hidden = self.model(source, hidden, lengths)
 		elif config.model_type == 'SAN' or config.model_type == 'SAN-Rel' or config.model_type == 'SAN-Simple':
+			#print ("Printing source")
+			#torch.set_printoptions(threshold=10000)
+			#print(source)
+			#print(len(source))
+			#exit(0)
 			output = self.model(source)
 		elif config.model_type == 'Mogrify':
 			output, hidden = self.model(source, hidden)
@@ -242,6 +247,9 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 				else:
 					hidden = None
 				source, targets, word_lens = train_loader.get_batch(i)
+				#print("Printing source after get_batch")
+				#torch.set_printoptions(threshold=10000)
+				#print(source)
 				source, targets, word_lens = source.to(device), targets.to(device), word_lens.to(device)
 
 				loss, hidden = model.trainer(source, targets, word_lens, hidden, config)
