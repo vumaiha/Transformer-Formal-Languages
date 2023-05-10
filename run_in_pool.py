@@ -6,7 +6,7 @@ from pathlib import Path
 
 # This scripts runs the configurations given in the following 
 # list of dictionaries
-DATASET="SL_2_3_1_u-bbb"
+DATASET="SL_4_6_3_a-abdabd"
 PYTHON_COMMAND="/itf-fi-ml/home/maihv/.conda/envs/transformers-fl/bin/python3"
 EXTRA_PARAMS= " -gpu 0"
 hyperparameters={
@@ -14,7 +14,7 @@ hyperparameters={
         "depth": {"begin":1, "end":4},
         "heads": {"begin":1, "end":4}, 
         "lr": [0.01,0.001],
-        "run_params": ["-model_type SAN", "-model_type SAN -pos_encode"]
+        "run_params": ["-model_type SAN", "-model_type SAN -pos_encode","-model_type SAN-Rel -tgt_len 200", "model_type SAN-Rel -tgt_len 6", "model_type SAN-Rel -tgt_len 3"]
         }
 pending_directory = 'run_pool/pending'
 running_directory = 'run_pool/running'

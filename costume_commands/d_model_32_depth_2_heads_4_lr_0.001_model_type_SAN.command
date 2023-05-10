@@ -1,1 +1,0 @@
-/itf-fi-ml/home/maihv/.conda/envs/transformers-fl/bin/python3 -m src.main -mode train -dataset SL_2_3_1_u-bbb -epochs 100 -run_name d_model_32_depth_2_heads_4_lr_0.001_model_type_SAN -d_model 32 -depth 2 -heads 4 -lr 0.001 -model_type SAN
