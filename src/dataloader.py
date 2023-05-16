@@ -110,12 +110,13 @@ class SLCorpus(object):
 	def __init__(self, n_letters, k, nsigma_k, n_kgrams, type, size, lower_window, upper_window, debug = False):
 		self.Lang = SLLanguage(n_letters, k, nsigma_k, n_kgrams, type)
 		self.source, self.target = self.generate_data(size, lower_window, upper_window)
-		self.noutputs = self.Lang.n_letters #what is this?
+		self.noutputs = self.Lang.n_letters
 		self.bannedkgrams = self.Lang.bannedkgrams
 
 	def generate_data(self, size, lower_window, upper_window):
 		inputs, outputs = self.Lang.training_set_generator(size, lower_window, upper_window)
 		return inputs, outputs
+
 
 class CRLCorpus(object):
 
