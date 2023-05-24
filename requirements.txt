@@ -129,3 +129,5 @@ Werkzeug==1.0.1
 widgetsnbextension==3.5.1
 zipp==2.1.0
 zope.interface==4.7.1
+gensim==4.2.0
+dataclasses==0.8
