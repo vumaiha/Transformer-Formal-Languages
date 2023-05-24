@@ -73,6 +73,26 @@ class CosineNpiPositionalEncoding(nn.Module):
 		x = x + self.pe[:x.size(0), :]
 		return self.dropout(x)
 
+class PeriodNPositionalEncoding(nn.Module):
+
+	def __init__(self, d_model, dropout=0.1, max_len=500, periodicity): #changed max_len to 500 to match with original absolute encoding
+		super(PeriodNPositionalEncoding, self).__init__()
+		odd_flag=False
+		if int(d_model%2) !=0:
+			odd_flag=True
+		self.dropout = nn.Dropout(p=dropout)
+		pe = torch.ones(max_len, d_model)
+		for i in range(max_len):
+			pe[i] = pe[i] * (i%periodicity)/(periodicity-1)
+		pe = pe.unsqueeze(0).transpose(0, 1)
+		print(pe)
+		self.register_buffer('pe', pe)
+
+	def forward(self, x):
+
+		x = x + self.pe[:x.size(0), :]
+		return self.dropout(x)
+
 class LearnablePositionalEncoding(nn.Module):
 
 	def __init__(self, d_model, dropout=0.1, max_len=5000, init_range = 0.1):
