@@ -32,7 +32,7 @@ class TransformerModel(nn.Module):
 			self.pos_encoder = PositionalEncoding(d_model, dropout, max_period)
 		elif pos_encode_type == 'cosine_npi':
 			self.pos_encoder = CosineNpiPositionalEncoding(d_model, dropout)
-		elif pos_encode_type = 'period_n':
+		elif pos_encode_type == 'period_n':
 			self.pos_encoder = PeriodNPositionalEncoding(d_model, dropout, periodicity)
 		elif pos_encode_type == 'learnable':
 			self.pos_encoder = LearnablePositionalEncoding(d_model, dropout)
@@ -137,7 +137,7 @@ class SimpleTransformerModel(nn.Module):
 				self.pos_encoder = PositionalEncoding(d_model, dropout, max_period)
 			elif pos_encode_type == 'cosine_npi':
 				self.pos_encoder = CosineNpiPositionalEncoding(d_model, dropout)
-			elif pos_encode_type = 'period_n':
+			elif pos_encode_type == 'period_n':
 				self.pos_encoder = PeriodNPositionalEncoding(d_model, dropout, periodicity)
 			elif pos_encode_type == 'learnable':
 				self.pos_encoder = LearnablePositionalEncoding(d_model, dropout)
