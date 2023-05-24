@@ -75,7 +75,7 @@ class CosineNpiPositionalEncoding(nn.Module):
 
 class PeriodNPositionalEncoding(nn.Module):
 
-	def __init__(self, d_model, dropout=0.1, max_len=500, periodicity): #changed max_len to 500 to match with original absolute encoding
+	def __init__(self, d_model, dropout=0.1, max_len=500, periodicity=3): #changed max_len to 500 to match with original absolute encoding
 		super(PeriodNPositionalEncoding, self).__init__()
 		odd_flag=False
 		if int(d_model%2) !=0:

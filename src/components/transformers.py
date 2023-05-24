@@ -6,7 +6,7 @@ import ipdb as pdb
 from transformers import TransfoXLModel, TransfoXLConfig
 from src.components.self_attention import MultiHeadedAttention
 from src.components.transformer_encoder import Encoder, EncoderLayer, EncoderLayerFFN
-from src.components.position_encodings import 	PositionalEncoding, CosineNpiPositionalEncoding, LearnablePositionalEncoding, PeriodThreePositionalEncoding
+from src.components.position_encodings import 	PositionalEncoding, CosineNpiPositionalEncoding, LearnablePositionalEncoding, PeriodNPositionalEncoding
 
 class TransformerModel(nn.Module):
 	"""Container module with an encoder, a recurrent or transformer module, and a decoder."""
