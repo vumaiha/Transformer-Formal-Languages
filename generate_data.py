@@ -91,10 +91,27 @@ def load_data(config, num_bins = 2):
 					lower_depth = upper_depth
 					upper_depth = upper_depth + config.depth_incr
 
+		# elif config.lang == 'SL':
+		# 	print("Generating Training and Validation Bin0 Data for SL languages")
+		# 	train_corpus = SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.training_size, config.lower_window, config.upper_window, debug = config.debug)
+		# 	val_corpus_bins = [SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.test_size, config.lower_window, config.upper_window, debug = config.debug)]
+		# 	lower_window = config.upper_window + 1  #doublecheck if this is right
+		# 	upper_window = config.upper_window + config.len_incr
+		# 	for i in range(num_bins):
+		# 		print("Generating Data for [{}, {}]".format(lower_window, upper_window))
+		# 		val_corpus_bin = SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.test_size, lower_window, upper_window, debug = config.debug)
+		# 		val_corpus_bins.append(val_corpus_bin)
+		# 		lower_window = upper_window
+		# 		upper_window = upper_window + config.len_incr
+
 		elif config.lang == 'SL':
 			print("Generating Training and Validation Bin0 Data for SL languages")
-			train_corpus = SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.training_size, config.lower_window, config.upper_window, debug = config.debug)
-			val_corpus_bins = [SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.test_size, config.lower_window, config.upper_window, debug = config.debug)]
+			corpus = SLCorpus(config.n_letters, config.k, config.nsigma_k, config.n_kgrams, config.type, config.training_size + config.test_size, config.lower_window, config.upper_window, debug = config.debug)
+			train_corpus = copy.deepcopy(corpus)
+			train_corpus.source, train_corpus.target = corpus.source[:config.training_size], corpus.target[:config.training_size]
+			val_corpus = copy.deepcopy(corpus)
+			val_corpus.source, val_corpus.target = corpus.source[config.training_size:], corpus.target[config.training_size:]
+			val_corpus_bins = [val_corpus]
 			lower_window = config.upper_window + 1  #doublecheck if this is right
 			upper_window = config.upper_window + config.len_incr
 			for i in range(num_bins):
@@ -319,6 +336,7 @@ def main():
 
 	print("Loading Data!")
 	train_corpus, val_corpus_bins = load_data(config, num_bins = config.bins)
+
 	if config.lang == 'SL':
 		SL_data_name = config.dataset + '_' + str(config.n_letters) + '_' + str(config.k) + '_' + str(config.nsigma_k) + '_' + config.type[0] + '-' + train_corpus.bannedkgrams[0]
 		data_dir = os.path.join('data', SL_data_name)

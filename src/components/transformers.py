@@ -6,12 +6,12 @@ import ipdb as pdb
 from transformers import TransfoXLModel, TransfoXLConfig
 from src.components.self_attention import MultiHeadedAttention
 from src.components.transformer_encoder import Encoder, EncoderLayer, EncoderLayerFFN
-from src.components.position_encodings import 	PositionalEncoding, CosineNpiPositionalEncoding, LearnablePositionalEncoding
+from src.components.position_encodings import 	PositionalEncoding, CosineNpiPositionalEncoding, LearnablePositionalEncoding, PeriodNPositionalEncoding
 
 class TransformerModel(nn.Module):
 	"""Container module with an encoder, a recurrent or transformer module, and a decoder."""
 
-	def __init__(self, ntoken,noutputs, d_model, nhead, d_ffn, nlayers, dropout=0.5, use_embedding=False, pos_encode = True, bias = False, pos_encode_type = 'absolute', max_period = 10000.0):
+	def __init__(self, ntoken,noutputs, d_model, nhead, d_ffn, nlayers, dropout=0.5, use_embedding=False, pos_encode = True, bias = False, pos_encode_type = 'absolute', periodicity=3, max_period = 10000.0):
 		super(TransformerModel, self).__init__()
 		try:
 			from torch.nn import TransformerEncoder, TransformerEncoderLayer
@@ -32,6 +32,8 @@ class TransformerModel(nn.Module):
 			self.pos_encoder = PositionalEncoding(d_model, dropout, max_period)
 		elif pos_encode_type == 'cosine_npi':
 			self.pos_encoder = CosineNpiPositionalEncoding(d_model, dropout)
+		elif pos_encode_type == 'period_n':
+			self.pos_encoder = PeriodNPositionalEncoding(d_model, dropout, periodicity)
 		elif pos_encode_type == 'learnable':
 			self.pos_encoder = LearnablePositionalEncoding(d_model, dropout)
 		self.pos_encode = pos_encode
@@ -122,7 +124,7 @@ class SimpleTransformerModel(nn.Module):
 				pos_encode = True, bias = False, posffn = False,
 				freeze_emb = False, freeze_q = False, freeze_k = False,
 				freeze_v = False, freeze_f = False, zero_keys = False,
-				pos_encode_type = 'absolute', max_period = 10000.0):
+				pos_encode_type = 'absolute', periodicity=3, max_period = 10000.0):
 
 		super(SimpleTransformerModel, self).__init__()
 
@@ -135,6 +137,8 @@ class SimpleTransformerModel(nn.Module):
 				self.pos_encoder = PositionalEncoding(d_model, dropout, max_period)
 			elif pos_encode_type == 'cosine_npi':
 				self.pos_encoder = CosineNpiPositionalEncoding(d_model, dropout)
+			elif pos_encode_type == 'period_n':
+				self.pos_encoder = PeriodNPositionalEncoding(d_model, dropout, periodicity)
 			elif pos_encode_type == 'learnable':
 				self.pos_encoder = LearnablePositionalEncoding(d_model, dropout)
 		self.encoder = nn.Embedding(ntoken, d_model)
