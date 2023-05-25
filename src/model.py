@@ -104,6 +104,8 @@ class LanguageModel(nn.Module):
 		if config.model_type == 'RNN':
 			output, hidden = self.model(source, hidden, lengths)
 		elif config.model_type == 'SAN' or config.model_type == 'SAN-Rel' or config.model_type == 'SAN-Simple':
+			#print(source)
+			#exit(0)
 			output = self.model(source)
 		elif config.model_type == 'Mogrify':
 			output, hidden = self.model(source, hidden)

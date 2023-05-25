@@ -36,8 +36,9 @@ class PositionalEncoding(nn.Module):
 			pe[:, 1::2] = torch.cos(position * div_term[:-1])
 		else:
 			pe[:, 1::2] = torch.cos(position * div_term)
-
+		print(pe)
 		pe = pe.unsqueeze(0).transpose(0, 1)
+		print(pe)
 		self.register_buffer('pe', pe)
 
 	def forward(self, x):
@@ -63,13 +64,13 @@ class CosineNpiPositionalEncoding(nn.Module):
 			odd_flag=True
 		self.dropout = nn.Dropout(p=dropout)
 		pe = torch.ones(max_len, d_model)
-		print(max_len)
-		print(d_model)
+		#print(max_len)
+		#print(d_model)
 		for i in range(max_len):
 			pe[i] = pe[i] * math.cos(i * math.pi)
-		print(pe)
+		#print(pe)
 		pe = pe.unsqueeze(0).transpose(0, 1)
-		print(pe)
+		#print(pe)
 		self.register_buffer('pe', pe)
 
 	def forward(self, x):
@@ -86,14 +87,14 @@ class PeriodNPositionalEncoding(nn.Module):
 			odd_flag=True
 		self.dropout = nn.Dropout(p=dropout)
 		pe = torch.ones(max_len, d_model)
-		print(max_len)
-		print(d_model)
-		print(pe)
+		#print(max_len)
+		#print(d_model)
+		#print(pe)
 		for i in range(max_len):
 			pe[i] = pe[i] * (i%periodicity)/(periodicity-1)
-		print(pe)
+		#print(pe)
 		pe = pe.unsqueeze(0).transpose(0, 1)
-		print(pe)
+		#print(pe)
 		self.register_buffer('pe', pe)
 
 	def forward(self, x):

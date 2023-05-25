@@ -19,6 +19,7 @@ def sent_to_idx(voc, sent, max_length=-1):
 			pdb.set_trace()
 	idx_vec.append(voc.get_id('T'))
 	idx_vec= pad_seq(idx_vec, max_length+1, voc)
+	#idx_vec= pad_seq(idx_vec, 150, voc)
 	return idx_vec
 
 
