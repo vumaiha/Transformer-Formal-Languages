@@ -231,9 +231,10 @@ class Sampler(object):
 		word_lens = torch.tensor([len(x) for x in word_batch], dtype= torch.long)
 
 		batch_ids = sents_to_idx(self.voc, word_batch)
-		print("printing first string" + word_batch[0])
-		torch.set_printoptions(threshold=10_000)
-		print(batch_ids[0])
+		if i == 0:
+			print("printing first string" + word_batch[0])
+			torch.set_printoptions(threshold=10_000)
+			print(batch_ids[0])
 		#print(len(batch_ids))
 		source = batch_ids[:,:-1].transpose(0,1)
 		#torch.set_printoptions(threshold=10_000)
