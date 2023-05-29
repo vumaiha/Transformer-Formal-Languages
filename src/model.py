@@ -243,7 +243,7 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 					hidden = model.model.init_hidden(config.batch_size)
 				else:
 					hidden = None
-				source, targets, word_lens = train_loader.get_batch(i)
+				source, targets, word_lens = train_torch.set_printoptions(threshold=10_000)loader.get_batch(i)
 				source, targets, word_lens = source.to(device), targets.to(device), word_lens.to(device)
 
 				loss, hidden = model.trainer(source, targets, word_lens, hidden, config)
