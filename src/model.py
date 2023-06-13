@@ -184,7 +184,7 @@ class LanguageModel(nn.Module):
 		if config.model_type != 'SAN' and config.model_type != 'SAN-Simple' and config.model_type != 'SAN-Rel':
 			hidden = self.repackage_hidden(hidden)
 
-		return  batch_acc, hidden, sum(output_list), sum(target_list)
+		return  batch_acc, hidden, output_list, target_list
 
 
 	def repackage_hidden(self, h):
