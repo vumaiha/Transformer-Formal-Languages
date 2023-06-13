@@ -166,8 +166,8 @@ class LanguageModel(nn.Module):
 		for j in range(out_np.shape[1]):
 			out_j = out_np[:,j]
 			target_j = target_np[:,j]
-			output_list.append(out_j)
-			target_list.append(target_j)
+			output_list.append(np.array2string(out_j.flatten()))
+			target_list.append(np.array2string(target_j.flatten()))
 			#print("printing out_j")
 			#print(out_j.asarray)
 			#np.savetxt(output_target,out_j,delimiter = "\t")
