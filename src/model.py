@@ -435,7 +435,7 @@ def run_validation(config, model, val_loader, voc, device, logger):
 		{"Output": master_output,
 		 "Target": master_target}
 	)
-	output_target_df.to_csv("output_target.tsv", sep = '\t', mode = 'a', index = False, head=False)
+	output_target_df.to_csv("output_target.tsv", sep = '\t', mode = 'a', index = False, header=False)
 
 	val_acc_epoch = val_acc_epoch / val_loader.num_batches
 
