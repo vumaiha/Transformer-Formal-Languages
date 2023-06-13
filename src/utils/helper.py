@@ -113,7 +113,7 @@ def load_checkpoint(model, mode, ckpt_path, logger, device, bins = -1):
 		return start_epoch, train_loss, score, voc
 
 def flatten_list(l):
-    return [item for sublist in l for item in sublist]
+    return [item for item in l]
 
 
 class Voc:

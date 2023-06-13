@@ -423,8 +423,8 @@ def run_validation(config, model, val_loader, voc, device, logger):
 			source, targets, word_lens = val_loader.get_batch(i)
 			source, targets, word_lens = source.to(device), targets.to(device), word_lens.to(device)
 			acc, hidden, output_list, target_list = model.evaluator(source, targets, word_lens, hidden, config)
-			master_output.append(output_list)
-			master_target.append(target_list)
+			master_output.append(flatten_list(output_list))
+			master_target.append(flatten_list(target_list))
 			val_acc_epoch += acc
 			batch_num += 1
 
