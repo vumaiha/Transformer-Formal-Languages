@@ -131,9 +131,6 @@ class LanguageModel(nn.Module):
 
 		return loss.item(), hidden
 
-	output_target = open("output_target.tsv", "a")
-	output_target.write("output\ttarget\n")
-
 
 	def evaluator(self, source, targets, lengths, hidden, config, device=None ,logger=None):
 
@@ -149,6 +146,9 @@ class LanguageModel(nn.Module):
 		batch_acc = 0.0
 		mask = (source!=0).float().unsqueeze(-1)
 		masked_output = mask*output
+
+		output_list = []
+		target_list = []
 		try:
 			out_np= np.int_(masked_output.detach().cpu().numpy() >= self.epsilon)
 			target_np = np.int_(targets.detach().cpu().numpy())
@@ -161,20 +161,22 @@ class LanguageModel(nn.Module):
 		except:
 			pdb.set_trace()
 
-		output_target = open("output_target.tsv", "a")
+		#output_target = open("output_target.tsv", "a")
 
 		for j in range(out_np.shape[1]):
 			out_j = out_np[:,j]
 			target_j = target_np[:,j]
+			output_list.append(out_j)
+			target_list.append(target_j)
 			#print("printing out_j")
 			#print(out_j.asarray)
 			#np.savetxt(output_target,out_j,delimiter = "\t")
-			output_target.write(np.array2string(out_j.flatten(), max_line_width=10000, separator ="") + "\t" + np.array2string(target_j.flatten(), max_line_width=10000, separator ="") + "\n")
+			#output_target.write(np.array2string(out_j.flatten(), max_line_width=10000, separator ="") + "\t" + np.array2string(target_j.flatten(), max_line_width=10000, separator ="") + "\n")
 			if np.all(np.equal(out_j, target_j)) and (out_j.flatten() == target_j.flatten()).all():
 			# If so, set `pred` as one
 				batch_acc+=1
 
-		output_target.close()
+		#output_target.close()
 
 		batch_acc = batch_acc/source.size(1)
 
@@ -182,7 +184,7 @@ class LanguageModel(nn.Module):
 		if config.model_type != 'SAN' and config.model_type != 'SAN-Simple' and config.model_type != 'SAN-Rel':
 			hidden = self.repackage_hidden(hidden)
 
-		return  batch_acc, hidden
+		return  batch_acc, hidden, output_list, target_list
 
 
 	def repackage_hidden(self, h):
@@ -408,7 +410,8 @@ def run_validation(config, model, val_loader, voc, device, logger):
 	val_acc_epoch =0.0
 	model.eval()
 
-
+	master_output = []
+	master_target = []
 
 	with torch.no_grad():
 		for batch, i in enumerate(range(0, len(val_loader), val_loader.batch_size)):
@@ -419,12 +422,20 @@ def run_validation(config, model, val_loader, voc, device, logger):
 
 			source, targets, word_lens = val_loader.get_batch(i)
 			source, targets, word_lens = source.to(device), targets.to(device), word_lens.to(device)
-			acc, hidden = model.evaluator(source, targets, word_lens, hidden, config)
+			acc, hidden, output_list, target_list = model.evaluator(source, targets, word_lens, hidden, config)
+			master_output.append(output_list)
+			master_target.append(target_list)
 			val_acc_epoch += acc
 			batch_num += 1
 
 	if batch_num != val_loader.num_batches:
 		pdb.set_trace()
+
+	output_target_df = pd.DataFrame(
+		{"Output": master_output,
+		 "Target": master_target}
+	)
+	output_target_df.to_csv("output_target.tsv", sep = '\t')
 
 	val_acc_epoch = val_acc_epoch / val_loader.num_batches
 
@@ -450,7 +461,7 @@ def run_test(config, model, test_loader, voc, device, logger):
 			except Exception as e:
 				pdb.set_trace()
 			source, targets, word_lens = source.to(device), targets.to(device), word_lens.to(device)
-			acc, hidden = model.evaluator(source, targets, word_lens, hidden, config)
+			acc, hidden, output_list, target_list = model.evaluator(source, targets, word_lens, hidden, config)
 			test_acc_epoch += acc
 
 			source_str = test_loader.data[i]
