@@ -22,7 +22,7 @@ from src.components.mogrifierLSTM import MogrifierLSTMModel
 
 from src.utils.sentence_processing import *
 from src.utils.logger import print_log, store_results
-from src.utils.helper import save_checkpoint
+from src.utils.helper import save_checkpoint, flatten_list
 
 from src.visualize_san import generate_visualizations
 
@@ -423,8 +423,8 @@ def run_validation(config, model, val_loader, voc, device, logger):
 			source, targets, word_lens = val_loader.get_batch(i)
 			source, targets, word_lens = source.to(device), targets.to(device), word_lens.to(device)
 			acc, hidden, output_list, target_list = model.evaluator(source, targets, word_lens, hidden, config)
-			master_output.append(output_list)
-			master_target.append(target_list)
+			master_output.append(flatten_list(output_list))
+			master_target.append(flatten_list(target_list))
 			val_acc_epoch += acc
 			batch_num += 1
 
@@ -435,7 +435,7 @@ def run_validation(config, model, val_loader, voc, device, logger):
 		{"Output": master_output,
 		 "Target": master_target}
 	)
-	output_target_df.to_csv("output_target.tsv", sep = '\t')
+	output_target_df.to_csv("output_target.tsv", sep = '\t', mode = 'a', index = False, head=False)
 
 	val_acc_epoch = val_acc_epoch / val_loader.num_batches
 

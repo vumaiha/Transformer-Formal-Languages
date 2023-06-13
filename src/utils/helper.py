@@ -112,6 +112,8 @@ def load_checkpoint(model, mode, ckpt_path, logger, device, bins = -1):
 			logger.warning('Could not Load Checkpoint from {}  \t \"at load_checkpoint() in helper.py \"'.format(ckpt_path))
 		return start_epoch, train_loss, score, voc
 
+def flatten_list(l):
+    return [item for sublist in l for item in sublist]
 
 
 class Voc:
