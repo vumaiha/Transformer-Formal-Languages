@@ -166,8 +166,8 @@ class LanguageModel(nn.Module):
 		for j in range(out_np.shape[1]):
 			out_j = out_np[:,j]
 			target_j = target_np[:,j]
-			output_list.append(np.array2string(out_j.flatten()))
-			target_list.append(np.array2string(target_j.flatten()))
+			output_list.append(np.array2string(out_j.flatten(), max_line_width=10000, separator =""))
+			target_list.append(np.array2string(target_j.flatten(), max_line_width=10000, separator =""))
 			#print("printing out_j")
 			#print(out_j.asarray)
 			#np.savetxt(output_target,out_j,delimiter = "\t")
@@ -184,7 +184,7 @@ class LanguageModel(nn.Module):
 		if config.model_type != 'SAN' and config.model_type != 'SAN-Simple' and config.model_type != 'SAN-Rel':
 			hidden = self.repackage_hidden(hidden)
 
-		return  batch_acc, hidden, output_list, target_list
+		return  batch_acc, hidden, sum(output_list), sum(target_list)
 
 
 	def repackage_hidden(self, h):
