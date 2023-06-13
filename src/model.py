@@ -3,6 +3,7 @@ import sys
 import math
 import logging
 import random
+import csv
 from time import time
 import numpy as np
 import pandas as pd
@@ -130,6 +131,10 @@ class LanguageModel(nn.Module):
 
 		return loss.item(), hidden
 
+	output_target = open("output_target.tsv", "a")
+	output_target.write("output\ttarget\n")
+
+
 	def evaluator(self, source, targets, lengths, hidden, config, device=None ,logger=None):
 
 		if config.model_type == 'RNN':
@@ -141,22 +146,35 @@ class LanguageModel(nn.Module):
 		elif config.model_type == 'SARNN':
 			output, hidden = self.model(source, hidden)
 
-
 		batch_acc = 0.0
 		mask = (source!=0).float().unsqueeze(-1)
 		masked_output = mask*output
 		try:
 			out_np= np.int_(masked_output.detach().cpu().numpy() >= self.epsilon)
 			target_np = np.int_(targets.detach().cpu().numpy())
+			#print("out_np:")
+			#np.set_printoptions(threshold=10_000)
+			#print(out_np)
+			#print("target_np:")
+			#np.set_printoptions(threshold=10_000)
+			#print(target_np)
 		except:
 			pdb.set_trace()
+
+		output_target = open("output_target.tsv", "a")
 
 		for j in range(out_np.shape[1]):
 			out_j = out_np[:,j]
 			target_j = target_np[:,j]
+			#print("printing out_j")
+			#print(out_j.asarray)
+			#np.savetxt(output_target,out_j,delimiter = "\t")
+			output_target.write(np.array2string(out_j.flatten(), max_line_width=10000, separator ="") + "\t" + np.array2string(target_j.flatten(), max_line_width=10000, separator ="") + "\n")
 			if np.all(np.equal(out_j, target_j)) and (out_j.flatten() == target_j.flatten()).all():
 			# If so, set `pred` as one
 				batch_acc+=1
+
+		output_target.close()
 
 		batch_acc = batch_acc/source.size(1)
 
