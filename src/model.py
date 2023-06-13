@@ -169,7 +169,7 @@ class LanguageModel(nn.Module):
 			output_list.append(np.array2string(out_j.flatten(), max_line_width=10000, separator =""))
 			target_list.append(np.array2string(target_j.flatten(), max_line_width=10000, separator =""))
 			#print("printing out_j")
-			#print(out_j.asarray)
+			#print(output_list[0])
 			#np.savetxt(output_target,out_j,delimiter = "\t")
 			#output_target.write(np.array2string(out_j.flatten(), max_line_width=10000, separator ="") + "\t" + np.array2string(target_j.flatten(), max_line_width=10000, separator ="") + "\n")
 			if np.all(np.equal(out_j, target_j)) and (out_j.flatten() == target_j.flatten()).all():
@@ -423,8 +423,8 @@ def run_validation(config, model, val_loader, voc, device, logger):
 			source, targets, word_lens = val_loader.get_batch(i)
 			source, targets, word_lens = source.to(device), targets.to(device), word_lens.to(device)
 			acc, hidden, output_list, target_list = model.evaluator(source, targets, word_lens, hidden, config)
-			master_output.append(flatten_list(output_list))
-			master_target.append(flatten_list(target_list))
+			master_output.extend(output_list)
+			master_target.extend(target_list)
 			val_acc_epoch += acc
 			batch_num += 1
 
