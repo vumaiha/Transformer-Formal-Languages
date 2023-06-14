@@ -291,11 +291,14 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 			val_acc_epoch_bins = [bins[0] for bins in val_output]
 			val_output_target_dfs = [bins[1] for bins in val_output]
 			for i in range(len(val_output_target_dfs)):
-				val_output_target_dfs[i]["Bin"] = i
-			#df_keys = [i for i in range(len(val_output_target_dfs))]
+				val_output_target_dfs[i].insert(0, "Bin", i)
 			val_output_target_df = pd.concat(val_output_target_dfs)
-			print(val_output_target_df)
 			train_acc_epoch, train_output_target_df = run_validation(config, model, train_loader, voc, device, logger)
+			train_output_target_df.insert(0, "Bin", "train")
+			frames = [val_output_target_df, train_output_target_df]
+			output_target_df = pd.concat(frames)
+			output_target_df.insert(0, "Epoch", epoch)
+			print(output_target_df)
 			#output_target_df.to_csv("{}_{}_output_target.tsv".format(config.dataset, config.run_name), sep='\t', mode='a', index=False, header=False)
 			if train_acc_epoch ==  max(max_train_acc, train_acc_epoch):
 				best_train_epoch = epoch
