@@ -227,6 +227,7 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 	best_epoch_bins = [0 for i in range(n_bins)]
 	iters = 0
 	viz_every = int(train_loader.num_batches // 4)
+	output_target_dfs = []
 	#best_gen_epoch = 0
 	#val_acc_epoch_bins = [run_validation(config, model, val_loader_bin, voc, device, logger) for val_loader_bin in val_loader_bins]
 	#pdb.set_trace()
@@ -296,9 +297,10 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 			train_acc_epoch, train_output_target_df = run_validation(config, model, train_loader, voc, device, logger)
 			train_output_target_df.insert(0, "Bin", "train")
 			frames = [val_output_target_df, train_output_target_df]
-			output_target_df = pd.concat(frames)
-			output_target_df.insert(0, "Epoch", epoch)
-			print(output_target_df)
+			epoch_output_target_df = pd.concat(frames)
+			epoch_output_target_df.insert(0, "Epoch", epoch)
+			output_target_dfs.append(epoch_output_target_df)
+			print(epoch_output_target_df)
 			#output_target_df.to_csv("{}_{}_output_target.tsv".format(config.dataset, config.run_name), sep='\t', mode='a', index=False, header=False)
 			if train_acc_epoch ==  max(max_train_acc, train_acc_epoch):
 				best_train_epoch = epoch
@@ -400,6 +402,8 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 				logger.info('Reached optimum performance!')
 				break
 
+		output_target_df = pd.concat(output_target_dfs)
+		output_target_df.to_csv("{}_{}_output_target.tsv".format(config.dataset, config.run_name), sep='\t', mode='a', index=False, header=False)
 		writer.export_scalars_to_json(os.path.join(config.board_path, 'all_scalars.json'))
 		writer.close()
 
