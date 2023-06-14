@@ -253,7 +253,8 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 				if config.viz and config.model_type == 'SAN' and batch % viz_every == 0:
 					#if val_acc_bin1 > max_val_acc_bin1:
 					#	max_val_acc_bin1 = val_acc_bin1
-					val_acc_bins = [run_validation(config, model, val_loader_bins[i], voc, device, logger) for i in range(1,4)]
+					val_acc_bins, viz_output_target_df = [run_validation(config, model, val_loader_bins[i], voc, device, logger) for i in range(1,4)]
+					#output_target_df.to_csv("{}_{}_output_target.tsv".format(config.dataset, config.run_name), sep='\t', mode='a', index=False, header=False)
 					generate_visualizations(model, config, voc, run_name = config.run_name, iteration = iters, score = sum(val_acc_bins)/3, device = device)
 					if writer:
 						bin_acc_dict = {'bin{}_score'.format(i+1) : val_acc_bins[i] for i in range(3)}
@@ -286,8 +287,10 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 			logger.debug('Training for epoch {} completed...\nTime Taken: {}'.format(epoch, time_taken))
 			logger.debug('Starting Validation')
 
-			val_acc_epoch_bins = [run_validation(config, model, val_loader_bin, voc, device, logger) for val_loader_bin in val_loader_bins]
-			train_acc_epoch = run_validation(config, model, train_loader, voc, device, logger)
+			val_acc_epoch_bins, val_output_target_df = [run_validation(config, model, val_loader_bin, voc, device, logger) for val_loader_bin in val_loader_bins]
+			print(val_output_target_df)
+			train_acc_epoch, train_output_target_df = run_validation(config, model, train_loader, voc, device, logger)
+			#output_target_df.to_csv("{}_{}_output_target.tsv".format(config.dataset, config.run_name), sep='\t', mode='a', index=False, header=False)
 			if train_acc_epoch ==  max(max_train_acc, train_acc_epoch):
 				best_train_epoch = epoch
 				max_train_acc = train_acc_epoch
@@ -435,11 +438,11 @@ def run_validation(config, model, val_loader, voc, device, logger):
 		{"Output": master_output,
 		 "Target": master_target}
 	)
-	output_target_df.to_csv("{}_{}_output_target.tsv".format(config.dataset, config.run_name), sep = '\t', mode = 'a', index = False, header=False)
+
 
 	val_acc_epoch = val_acc_epoch / val_loader.num_batches
 
-	return val_acc_epoch
+	return val_acc_epoch, output_target_df
 
 def run_test(config, model, test_loader, voc, device, logger):
 	batch_num =1
