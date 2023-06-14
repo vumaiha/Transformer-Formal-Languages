@@ -287,8 +287,8 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 			logger.debug('Training for epoch {} completed...\nTime Taken: {}'.format(epoch, time_taken))
 			logger.debug('Starting Validation')
 
-			val_acc_epoch_bins, val_output_target_df = [run_validation(config, model, val_loader_bin, voc, device, logger) for val_loader_bin in val_loader_bins]
-			print(val_output_target_df)
+			val_acc_epoch_bins = [run_validation(config, model, val_loader_bin, voc, device, logger) for val_loader_bin in val_loader_bins]
+			print(val_acc_epoch_bins)
 			train_acc_epoch, train_output_target_df = run_validation(config, model, train_loader, voc, device, logger)
 			#output_target_df.to_csv("{}_{}_output_target.tsv".format(config.dataset, config.run_name), sep='\t', mode='a', index=False, header=False)
 			if train_acc_epoch ==  max(max_train_acc, train_acc_epoch):
