@@ -290,7 +290,10 @@ def train_model(model, train_loader, val_loader_bins, voc, device, config, logge
 			val_output = [run_validation(config, model, val_loader_bin, voc, device, logger) for val_loader_bin in val_loader_bins]
 			val_acc_epoch_bins = [bins[0] for bins in val_output]
 			val_output_target_dfs = [bins[1] for bins in val_output]
-			val_output_target_df = pd.concat(val_output_target_dfs, keys = [0,1,2])
+			for i in range(len(val_output_target_dfs)):
+				val_output_target_dfs[i]["Bin"] = i
+			#df_keys = [i for i in range(len(val_output_target_dfs))]
+			val_output_target_df = pd.concat(val_output_target_dfs)
 			print(val_output_target_df)
 			train_acc_epoch, train_output_target_df = run_validation(config, model, train_loader, voc, device, logger)
 			#output_target_df.to_csv("{}_{}_output_target.tsv".format(config.dataset, config.run_name), sep='\t', mode='a', index=False, header=False)
